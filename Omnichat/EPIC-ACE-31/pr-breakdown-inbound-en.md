@@ -2,20 +2,29 @@
 
 This document provides a breakdown of tasks into small, manageable Pull Requests (PRs) or branches for **Sequence 1: Inbound Flow** of EPIC-ACE-31 (NDP-01 to NDP-05). It excludes the basic tenant and channel account setup (which belongs to EPIC-ACE-30 / FND-01) to ensure each PR is small, easy to review, and allows for parallel development.
 
+> [!IMPORTANT]
+> **Reference Documents** — All implementation must align with these consolidated epic-level specs:
+>
+> | Document | Description |
+> |---|---|
+> | [epic-api-table.md](./epic-api-table.md) | Consolidated API surface — endpoints, request/response contracts, pagination conventions |
+> | [epic-er-diagram.md](./epic-er-diagram.md) | Consolidated ER diagram — all entities, fields, indexes, unique constraints |
+> | [epic-sequence.md](./epic-sequence.md) | Consolidated sequence diagrams — inbound/outbound/query flows, SQS config, PII redaction rules |
+
 ---
 
 ## 🗄️ Stage 1: Database & Internal API (Data Layer for NDP)
 **Target Projects:** `omnichat-service` and Shared schema
 **Goal:** Prepare database tables and internal APIs to receive data from the normalization worker.
 
-- [ ] **PR 1.1: NDP Database Schema**
+- [x] **PR 1.1: NDP Database Schema**
     - **Tasks:** Create schema definitions and migrations specifically for `Contacts`, `Conversations`, `Messages`, `Attachments`, and `RawEvents` tables.
     - **Review Focus:** Unique constraints for idempotency (preventing duplicate processing) and indexes for cursor-based pagination.
 
-- [ ] **PR 1.2: Raw Events API**
+- [x] **PR 1.2: Raw Events API**
     - **Tasks:** Implement `POST /raw-events` (to persist the original webhook payload) and `PATCH /raw-events/:id` (to update the normalization status upon failure).
 
-- [ ] **PR 1.3: Inbound Persistence API (Core Logic)**
+- [x] **PR 1.3: Inbound Persistence API (Core Logic)**
     - **Tasks:** Implement `POST /messages/inbound`.
     - **Review Focus:** Resolution logic: `UPSERT` Contact -> Create or retrieve Conversation using `fallback_thread_key` -> `INSERT` Message (Idempotent).
 
@@ -25,11 +34,11 @@ This document provides a breakdown of tasks into small, manageable Pull Requests
 **Target Project:** `omnichat-gateway`
 **Goal:** Receive webhooks from external channels (LINE, FB, etc.), validate them quickly, and push them to the message queue.
 
-- [ ] **PR 2.1: Webhook Controller & Security**
+- [x] **PR 2.1: Webhook Controller & Security**
     - **Tasks:** Create a unified `POST /webhooks/:channel` controller.
     - **Review Focus:** Signature validation middleware (HMAC-SHA256) and Rate Limiting logic.
 
-- [ ] **PR 2.2: SQS Producer & Deduplication**
+- [x] **PR 2.2: SQS Producer & Deduplication**
     - **Tasks:** Implement logic to publish payloads to an AWS SQS FIFO queue.
     - **Review Focus:** Correct configuration of `MessageGroupId` (to maintain order per channel/user) and `DeduplicationId` (`SHA256(payload)`) to prevent processing duplicate webhook deliveries.
 
@@ -39,7 +48,7 @@ This document provides a breakdown of tasks into small, manageable Pull Requests
 **Target Project:** `omnichat-normalizer-worker`
 **Goal:** Consume messages from the queue, redact PII, normalize the payload structure, and forward it to Stage 1 APIs for persistence.
 
-- [ ] **PR 3.1: SQS Consumer Setup & PII Redactor**
+- [x] **PR 3.1: SQS Consumer Setup & PII Redactor**
     - **Tasks:** Set up the SQS Consumer (Long-polling 20s, batch size of 10) and implement the initial PII redaction layer.
     - **Review Focus:** Consumer configuration and error safety in redaction.
 
