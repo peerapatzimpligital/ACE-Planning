@@ -18,6 +18,7 @@ This workflow defines the steps for the agent to fetch an Epic and its Stories f
 3. **Analyzing the Data**:
    - Identify the **Epic ID** (e.g., `ACE-32`) and the **Epic Name**.
    - For each related Story, identify its **Story ID** (e.g., `ACE-689`), **Story Name** (e.g., `STORY-SOC-01...`), **Status**, **Assignees**, and **Description**.
+   - **CRITICAL - Full Description**: You MUST navigate into each story individually and expand the description section (e.g., clicking 'Show more' or 'Expand' buttons) to extract the COMPLETE description. This includes all Acceptance Criteria, Scope, and Technical/UI Notes. Do not just copy the truncated summary from the Epic page.
 
 4. **Directory Structure**:
    - Target base directory: `D:\Work\Meaw - Q\ACE\ACE-Planning\Omnichat`.
