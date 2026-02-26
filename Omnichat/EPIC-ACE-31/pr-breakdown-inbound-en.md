@@ -86,7 +86,7 @@ This document provides a breakdown of tasks into small, manageable Pull Requests
 **Target Projects:** `api-gateway`, `omnichat-service`
 **Goal:** Provide APIs to serve data to the Inbox UI or downstream AI processes.
 
-- [ ] **PR 5.1: Conversations List API**
+- [x] **PR 5.1: Conversations List API**
     - **Tasks:** Implement `GET /api/v1/conversations` (to populate the recent chats list).
     - **Review Focus:** Cursor-based pagination on `last_message_at` and correct JOIN logic with the Contacts table.
 
