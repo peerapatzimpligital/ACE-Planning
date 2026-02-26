@@ -52,11 +52,11 @@ This document provides a breakdown of tasks into small, manageable Pull Requests
     - **Tasks:** Set up the SQS Consumer (Long-polling 20s, batch size of 10) and implement the initial PII redaction layer.
     - **Review Focus:** Consumer configuration and error safety in redaction.
 
-- [ ] **PR 3.2: Channel Mappers (Strategy Pattern)**
+- [x] **PR 3.2: Channel Mappers (Strategy Pattern)**
     - **Tasks:** Implement transformation logic (starting with one channel, e.g., LINE) to map raw payloads into the standard `NormalizedEvent Contract`.
     - **Review Focus:** Usage of the Strategy Pattern to ensure extensibility for future channels, and support for marketplace metadata (`source_category`: chat, order_reference, fetch_history).
 
-- [ ] **PR 3.3: Worker Orchestration (Workflow Stitching)**
+- [x] **PR 3.3: Worker Orchestration (Workflow Stitching)**
     - **Tasks:** Integrate PR 3.1 and 3.2 into the main workflow.
     - **Sub-flow:**
         1. Call PR 1.2 (Save Raw Event).
@@ -70,13 +70,13 @@ This document provides a breakdown of tasks into small, manageable Pull Requests
 **Target Projects:** `file-service`, `omnichat-service`, `omnichat-normalizer-worker`
 **Goal:** Offload image/video/audio downloads and uploads to an asynchronous flow, preventing bottlenecks in the main text message processing pipeline.
 
-- [ ] **PR 4.1: Internal Upload API (`file-service`)**
+- [x] **PR 4.1: Internal Upload API (`file-service`)**
     - **Tasks:** Implement `POST /files/upload` to receive binary files, upload them to a public S3 bucket, and return a static `file_url`.
 
-- [ ] **PR 4.2: Attachment Tracking APIs (`omnichat-service`)**
+- [x] **PR 4.2: Attachment Tracking APIs (`omnichat-service`)**
     - **Tasks:** Implement `POST /attachments` (to create a record with a `pending` status) and `PATCH /attachments/:id` (to update the `file_url`, size, `retry_count`, `failure_reason`, and ultimate status upon completion or error).
 
-- [ ] **PR 4.3: Async Downloader (`omnichat-normalizer-worker`)**
+- [x] **PR 4.3: Async Downloader (`omnichat-normalizer-worker`)**
     - **Tasks:** Add logic after PR 3.3: If a message contains attachments, trigger an API to download the file from the channel network -> Validate Size/MIME type -> Send to PR 4.1 -> Update status using PR 4.2.
     - **Review Focus:** Max file size limitations, retry backoff logic (e.g., max 3 retries on network failures), and correct status transitions (`pending` -> `uploading` -> `uploaded` or `failed`/`rejected`).
 
@@ -93,6 +93,24 @@ This document provides a breakdown of tasks into small, manageable Pull Requests
 - [ ] **PR 5.2: Message Timeline API**
     - **Tasks:** Implement `GET /api/v1/conversations/:id/messages` (to populate the chat window).
     - **Review Focus:** Cursor-based pagination on `created_at` and accurately merging the static `file_url` for any associated attachments into the response.
+
+---
+
+## 💻 Stage 6: MVP Inbox UI (Frontend)
+**Target Project:** `omnichat-frontend`
+**Goal:** Build the core user interface for agents to view and manage incoming chats based on the provided design.
+
+- [ ] **PR 6.1: Chat List Panel (Left Column)**
+    - **Tasks:** Implement the "All chats" sidebar including tabs (Open, Follow up, Closed), filter button, and chat list items displaying avatar, name, last message snippet, timestamp, unread badges, and tags/labels.
+    - **Review Focus:** Proper integration with the Conversations List API (PR 5.1) and responsive rendering of the chat list.
+
+- [ ] **PR 6.2: Active Chat Window (Middle Column)**
+    - **Tasks:** Build the central chat area with the conversation header (user info, actions, "Close chat" button) and the message timeline (supporting text bubbles, product cards, and system indicators like "AI agent is responding...").
+    - **Review Focus:** Proper integration with the Message Timeline API (PR 5.2), auto-scrolling to the latest message, and component modularity for different message types.
+
+- [ ] **PR 6.3: Customer Information Panel (Right Column)**
+    - **Tasks:** Implement the right-side details panel containing tabs (Information, Automation logs, AI assistant), displaying customer contact details and notes.
+    - **Review Focus:** Clean presentation of dynamic customer data and reusable layout for the nested tabs.
 
 ---
 
